@@ -42,7 +42,7 @@ const Login = () => {
     try {
       dispatch(loginStart());
       const cleanedPhone = formData.phone.replace(/\D/g, '');
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const response = await axios.post('https://tea-server-production.up.railway.app/api/auth/login', {
         phone: cleanedPhone, 
         password: formData.password
       });

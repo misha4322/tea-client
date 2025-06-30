@@ -5,7 +5,7 @@ export const fetchOrders = createAsyncThunk(
   'orders/fetch',
   async (_, { getState }) => {
     const { auth } = getState();
-    const response = await axios.get('http://localhost:5000/api/orders', {
+    const response = await axios.get('https://tea-server-production.up.railway.app/api/orders', {
       headers: { Authorization: `Bearer ${auth.token}` }
     });
     return response.data;

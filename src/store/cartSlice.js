@@ -7,7 +7,7 @@ export const decrementQuantity = createAsyncThunk(
     const { auth } = getState();
     try {
       const response = await axios.patch(
-        `http://localhost:5000/api/cart/${productId}/decrement`,
+        `https://tea-server-production.up.railway.app/api/cart/${productId}/decrement`,
         {},
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
@@ -30,7 +30,7 @@ export const syncCart = createAsyncThunk(
         throw new Error('No authentication token');
       }
       
-      const response = await axios.get('http://localhost:5000/api/cart', {
+      const response = await axios.get('https://tea-server-production.up.railway.app/api/cart', {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
 
@@ -60,7 +60,7 @@ export const addToCartDB = createAsyncThunk(
       }
       
       const response = await axios.post(
-        'http://localhost:5000/api/cart/add',
+        'https://tea-server-production.up.railway.app/api/cart/add',
         { productId: product.id },
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
@@ -96,7 +96,7 @@ export const clearCartDB = createAsyncThunk(
   'cart/clear',
   async (_, { getState }) => {
     const { auth } = getState();
-    await axios.delete('http://localhost:5000/api/cart/clear', {
+    await axios.delete('https://tea-server-production.up.railway.app/api/cart/clear', {
       headers: { Authorization: `Bearer ${auth.token}` }
     });
   }

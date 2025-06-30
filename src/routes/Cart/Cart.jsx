@@ -81,7 +81,7 @@ const Cart = () => {
       };
 
       const response = await axios.post(
-        'http://localhost:5000/api/orders',
+        'https://tea-server-production.up.railway.app/api/orders',
         orderData,
         {
           headers: {

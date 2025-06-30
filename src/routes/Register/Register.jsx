@@ -52,7 +52,7 @@ const Register = () => {
     try {
       dispatch(registerStart()); 
       const cleanedPhone = formData.phone.replace(/\D/g, '');
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
+      const response = await axios.post('https://tea-server-production.up.railway.app/api/auth/register', {
         phone: cleanedPhone,
         password: formData.password,
         confirmPassword: formData.confirmPassword

@@ -7,7 +7,7 @@ export const fetchFavorites = createAsyncThunk(
   async (_, { getState }) => {
     const { auth } = getState();
     const response = await axios.get(
-      'http://localhost:5000/api/favorites',
+      'https://tea-server-production.up.railway.app/api/favorites',
       {
         headers: {
           Authorization: `Bearer ${auth.token}` 
@@ -23,7 +23,7 @@ export const toggleFavorite = createAsyncThunk(
   async (productId, { getState }) => {
     const { auth } = getState();
     const response = await axios.post(
-      'http://localhost:5000/api/favorites/toggle',
+      'https://tea-server-production.up.railway.app/api/favorites/toggle',
       { productId },
       {
         headers: {
