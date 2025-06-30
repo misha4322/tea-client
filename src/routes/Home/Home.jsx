@@ -146,9 +146,9 @@ const HomePage = () => {
                         return (
                             <div key={product.id} className={styles.productCard}>
                                 <img
-                                  src={`${import.meta.env.BASE_URL}img/${product.image_url}`}
-                                  alt={product.title}
-                                  className={styles.productImage}
+                                    src={/img/${product.image_url}}
+                                    alt={product.title}
+                                    className={styles.productImage}
                                 />
                                 <div className={styles.productInfo}>
                                     <p className={styles.productTitle}>{product.title}</p>
