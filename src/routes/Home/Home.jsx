@@ -1,223 +1,220 @@
-import { useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../../store/cartSlice';
-import { toggleFavorite } from '../../store/favoritesSlice';
-import { useEffect } from 'react';
-import { fetchProducts } from '../../store/productsSlice';
+// src/routes/Home/Home.js
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedComponents } from "../../features/componentsSlice";
+import { addToBasket, syncBasketWithServer } from "../../features/basketSlice";
+import { addFavoriteAsync, removeFavoriteAsync } from "../../features/userSlice";
+import s from "./Home.module.css";
+import { Heart as HeartIcon } from "react-feather";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
-import fon from '../../img/fon.png';
-import Heart from '../../img/Heart.png';
-import korzina from '../../img/korzina.png';
-import Logo from '../../img/Logo.png';
-import Person from '../../img/Person.png';
-import vidchay1 from '../../img/vidchay1.png';
-import vidchay2 from '../../img/vidchay2.png';
-import vidchay3 from '../../img/vidchay3.png';
-import vidchay4 from '../../img/vidchay4.png';
-import vidchay5 from '../../img/vidchay5.png';
-import vidchay6 from '../../img/vidchay6.png';
-import gruzovik from '../../img/gruzovik.png';
-import dengi from '../../img/dengi.png';
-import karobka from '../../img/karobka.png';
-import lampa from '../../img/lampa.png';
-import HeartFilled from '../../img/HeartFilled.png';
-import korzina2 from '../../img/korzina2.png'
-
-import { addToCartDB, syncCart } from '../../store/cartSlice';
-
-import styles from './Home.module.css'
-
-
-const HomePage = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const catalogRef = useRef(null);
-
-
-    const { isAuthenticated } = useSelector(state => state.auth);
-    const favorites = useSelector(state => state.favorites.items);
-    const products = useSelector(state => state.products.items);
-    const productsStatus = useSelector(state => state.products.status);
-
-
-    const handleCatalogClick = () => {
-        catalogRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-
-    const checkAuth = () => {
-        if (!isAuthenticated) {
-            alert('Пожалуйста, авторизуйтесь!');
-            navigate('/login');
-            return false;
-        }
-        return true;
-    };
-
-    const handleCartClick = (e) => {
-        if (!isAuthenticated) {
-            e.preventDefault();
-            navigate('/login');
-        }
-    };
-
-    const handleAddToCart = (product) => {
-        if (!checkAuth()) return;
-        dispatch(addToCartDB(product))
-            .unwrap()
-            .then(() => {
-                dispatch(syncCart());
-            })
-            .catch(error => {
-                console.error('Add to cart error:', error);
-                alert('Ошибка при добавлении в корзину: ' + (error.message || 'Неизвестная ошибка'));
-            });
-    };
-
-    const handleToggleFavorite = (product) => {
-        if (!checkAuth()) return;
-        dispatch(toggleFavorite(product.id)); 
-    };
-    useEffect(() => {
-        if (productsStatus === 'idle') {
-            dispatch(fetchProducts());
-        }
-    }, [productsStatus, dispatch]);
-
-    return (
-        <div className={styles.container}>
-            <header className={styles.header}>
-                <div className={styles.navContainer}>
-                    <div className={styles.nazv}>
-                    <Link to="/" className={styles.logoLink}>
-                        <img src={Logo} alt="Логотип" className={styles.logo} />
-                    </Link>
-                    <h1 className={styles.title}>Aroma</h1>
-                    </div>
-                    <div className={styles.iconsContainer}>
-                        <Link to="/cart" onClick={handleCartClick} className={styles.cartLink}>
-                            <img src={korzina} alt="Корзина" className={styles.cartIcon} />
-                        </Link>
-                        <Link to="/profile" className={styles.profileLink}>
-                            <img src={Person} alt="Профиль" className={styles.profileIcon} />
-                        </Link>
-                    </div>
-                </div>
-            </header>
-    
-            <section className={styles.heroSection}>
-                <div className={styles.heroContent}>
-                    <h2 className={styles.heroTitle}>Интернет-магазин чая</h2>
-                    <div className={styles.heroText}>
-                        <p>Добро пожаловать в Aroma, чайный магазин с самой большой коллекцией китайского чая в Европе.Мы осуществляем доставку китайского чая из Гамбурга, Германия, во все страны Европейского Союза. У нас вы можете заказать подарочный чайный набор в элегантной упаковке для своих близких.</p>
-
-                    </div>
-                    <button 
-                        onClick={handleCatalogClick}
-                        className={styles.catalogButton}
-                    >
-                        Каталог
-                    </button>
-                </div>
-            </section>
-
-            <section className={styles.teaTypesSection}>
-                <h3 className={styles.sectionTitle}>Виды чая</h3>
-                <div className={styles.teaTypesGrid}>
-                    {['Белый чай', 'Зеленый чай', 'Матча', 'Пуэр', 'Улун', 'Черный чай'].map((tea, index) => (
-                        <div key={tea} className={styles.teaTypeCard}>
-                            <img
-                                src={[vidchay1, vidchay2, vidchay3, vidchay4, vidchay5, vidchay6][index]}
-                                alt={tea}
-                                className={styles.teaTypeImage}
-                            />
-                            <p className={styles.teaTypeName}>{tea}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            <section className={styles.catalogSection} ref={catalogRef}>
-                <h3 className={styles.sectionTitle}>Каталог</h3>
-                <div className={styles.productsGrid}>
-                    {products.map((product) => {
-                        const isFavorite = favorites.includes(product.id);
-                        return (
-                            <div key={product.id} className={styles.productCard}>
-                                <img
-                                    src={`/img/${product.image_url}`}
-                                    alt={product.title}
-                                    className={styles.productImage}
-                                />
-                                <div className={styles.productInfo}>
-                                    <p className={styles.productTitle}>{product.title}</p>
-                                    <p className={styles.productPrice}>{product.price}Р</p>
-                                    <div className={styles.productActions}>
-                                        <button
-                                            onClick={() => handleAddToCart(product)}
-                                            className={styles.cartButton}
-                                            aria-label="Добавить в корзину"
-                                        >
-                                            <img src={korzina2} alt="Корзина" className={styles.actionIcon} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleToggleFavorite(product)}
-                                            className={styles.favoriteButton}
-                                            aria-label={isFavorite ? "Удалить из избранного" : "Добавить в избранное"}
-                                        >
-                                            <img
-                                                src={isFavorite ? HeartFilled : Heart}
-                                                alt="Избранное"
-                                                className={styles.actionIcon}
-                                            />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })}
-                </div>
-            </section>
-
-            <section className={styles.infoSection}>
-                <div>
-                <div className={styles.infoCard}>
-                    <img src={gruzovik} alt="Доставка" className={styles.infoIcon} />
-                    <div>
-                    <h4 className={styles.infoTitle}>Быстрая доставка</h4>
-                    <p className={styles.infoText}>Мы рады поставлять нашу продукцию во все страны Мира.</p>
-                    </div>
-                </div>
-                
-                <div className={styles.infoCard}>
-                    <img src={karobka} alt="Гарантия" className={styles.infoIcon} />
-                    <div>
-                    <h4 className={styles.infoTitle}>100% Удовлетворение</h4>
-                    <p className={styles.infoText}>Возникли проблемы? Наша компания всегда готова прийти на помощь.</p>
-                    </div>
-                </div>
-                </div>
-                <div>
-                <div className={styles.infoCard}>
-                    <img src={lampa} alt="Особый заказ" className={styles.infoIcon} />
-                    <div>
-                    <h4 className={styles.infoTitle}>Ищете особый чай?</h4>
-                    <p className={styles.infoText}>Мы здесь, чтобы помочь. Обращайтесь к нам с любыми особыми пожеланиями.</p>
-                    </div>
-                </div>
-                
-                <div className={styles.infoCard}>
-                    <img src={dengi} alt="Оплата" className={styles.infoIcon} />
-                    <div>
-                    <h4 className={styles.infoTitle}>Способы оплаты</h4>
-                    <p className={styles.infoText}>Мы принимаем PayPal, Apple Pay, Google Pay и основные карты.</p>
-                    </div>
-                </div>
-                </div>
-            </section>
-        </div>
-    );
+const categoryLabels = {
+  processor: "Процессор",
+  video_card: "Видеокарта",
+  memory: "Оперативная память",
+  storage: "Жесткий диск",
+  case: "Корпус",
+  power_supply: "Блок питания",
+  cooling: "Охлаждение",
+  motherboard: "Материнская плата",
 };
 
-export default HomePage;
+export const Home = () => {
+  const [builds, setBuilds] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+  const favorites = useSelector((state) => state.user.favorites || []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const buildsRes = await fetch('/api/builds?predefined=true');
+        if (!buildsRes.ok) throw new Error(buildsRes.statusText);
+        
+        const buildsData = await buildsRes.json();
+        setBuilds(buildsData);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError("Не удалось загрузить данные");
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+const handleBuy = async (build) => {
+  if (!token) {
+    navigate("/login");
+    return;
+  }
+
+ 
+  const roundedPrice = Math.round(build.total_price);
+  
+  dispatch(addToBasket({
+    build_id: build.id,
+    name: build.name,
+    img: build.image_url,
+    total_price: roundedPrice, 
+    quantity: 1
+  }));
+};
+
+  const handleEdit = (build) => {
+    const config = {};
+    build.components.forEach(comp => {
+      config[comp.category] = comp;
+    });
+    dispatch(setSelectedComponents(config));
+    navigate("/gather");
+  };
+
+  const handleAddFavorite = async (build) => {
+    if (!user) return navigate("/login");
+
+    const isFavorite = favorites.some(fav => fav.id === build.id);
+    
+    try {
+      if (isFavorite) {
+        await dispatch(removeFavoriteAsync(build.id)).unwrap();
+        alert(`Сборка "${build.name}" удалена из избранного!`);
+      } else {
+        const res = await fetch('/api/favorites', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            build_id: build.id
+          })
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || "Ошибка добавления в избранное");
+        }
+
+        const data = await res.json();
+        dispatch(addFavoriteAsync(data));
+        alert(`Сборка "${build.name}" добавлена в избранное!`);
+      }
+    } catch (err) {
+      console.error("Ошибка при работе с избранным:", err);
+      alert("Ошибка: " + err.message);
+    }
+  };
+
+  const renderComponents = (build) => (
+    <ul className={s.compList}>
+      {build.components.map(comp => (
+        <li key={comp.id} className={s.componentItem}>
+          <span className={s.span}>
+            {categoryLabels[comp.category]}: {comp.name}
+          </span>
+          <div className={s.line} />
+        </li>
+      ))}
+    </ul>
+  );
+
+  if (loading) return <p className={s.status}>Загрузка...</p>;
+  if (error) return <p className={s.statusError}>{error}</p>;
+
+  return (
+    <div className={s.container}>
+      <h2 className={s.title}>Готовые сборки</h2>
+      <div className={s.sliderContainer}>
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={30}
+          loop={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          navigation={true}
+          modules={[Autoplay, Pagination, Navigation]}
+          className={s.mySwiper}
+        >
+          {builds.slice(0, 3).map((b, i) => (
+            <SwiperSlide key={i} className={s.slide}>
+              <div className={s.containerSlide}>
+                <div className={s.textSlide}>
+                  <span>{b.name}</span>
+                  <button 
+                    onClick={() => handleBuy(b)} 
+                    className={s.btnSlide}
+                  >
+                    Купить ПК
+                  </button>
+                </div>
+                <img 
+                  src={`/build_images/${b.image_url}`} 
+                  alt={b.name} 
+                  className={s.imgSlide} 
+                />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      <h2 className={s.priceCategoryh2}>Ценовые категории</h2>
+      <div className={s.priceRange}>
+        {builds.map((build, index) => { 
+          const isFavorite = favorites.some(fav => fav.id === build.id);
+          
+          return (      
+            <div key={index} className={s.priceCategoryItem}>
+              <div className={s.div_opozone}>
+                <p className={s.valuable_h4}>{build.name}</p>
+                <img 
+                  src={`/build_images/${build.image_url}`} 
+                  alt={build.name} 
+                  className={s.buildImage} 
+                />
+                {renderComponents(build)}
+                <div className={s.div_knopka}>
+                  <div className={s.btnBuy}>
+                    <button 
+                      onClick={() => handleBuy(build)} 
+                      className={s.buyButton_categories}
+                    >
+                      Купить
+                    </button>
+                    <button 
+                      onClick={() => handleEdit(build)} 
+                      className={s.editButton}
+                    >
+                      Изменить
+                    </button>
+                    <button 
+                      onClick={() => handleAddFavorite(build)} 
+                      className={`${s.favoriteButton} ${isFavorite ? s.activeFavorite : ''}`}
+                    >
+                      {isFavorite ? 'В избранном' : 'В избранное'}
+                    </button>
+                  </div>
+                  <div className={s.totalPrice}>{build.total_price}₽</div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
