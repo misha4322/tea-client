@@ -34,10 +34,12 @@ const HomePage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const catalogRef = useRef(null);
-    const productsStatus = useSelector(state => state.products.status);
+
+
     const { isAuthenticated } = useSelector(state => state.auth);
     const favorites = useSelector(state => state.favorites.items);
     const products = useSelector(state => state.products.items);
+    const productsStatus = useSelector(state => state.products.status);
 
 
     const handleCatalogClick = () => {
@@ -81,8 +83,6 @@ const HomePage = () => {
         if (productsStatus === 'idle') {
             dispatch(fetchProducts());
         }
-        console.log("Products status:", productsStatus);
-        console.log("Products data:", products);
     }, [productsStatus, dispatch]);
 
     return (
@@ -140,10 +140,8 @@ const HomePage = () => {
 
             <section className={styles.catalogSection} ref={catalogRef}>
                 <h3 className={styles.sectionTitle}>Каталог</h3>
-                {productsStatus === 'loading' && <p>Загрузка товаров...</p>}
-                {productsStatus === 'failed' && <p>Ошибка загрузки товаров: {productsError}</p>}
                 <div className={styles.productsGrid}>
-                    {productsStatus === 'succeeded' && products.map((product) => {
+                    {products.map((product) => {
                         const isFavorite = favorites.includes(product.id);
                         return (
                             <div key={product.id} className={styles.productCard}>
