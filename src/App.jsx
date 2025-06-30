@@ -7,6 +7,7 @@ import Profile from "./routes/Profile/Profile.jsx";
 import Register from "./routes/Register/Register.jsx";
 import Login from "./routes/Login/Login.jsx";
 
+
 const router = createBrowserRouter([
   {
     path: '/',
